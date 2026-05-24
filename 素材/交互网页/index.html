@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI魔法·南开百年——历史照片修复对比</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: "PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+    background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
+    color: #fff;
+    min-height: 100vh;
+  }
+  .hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+  }
+  .hero h1 {
+    font-size: clamp(24px, 5vw, 42px);
+    background: linear-gradient(90deg, #c9a96e, #e8d5a3, #c9a96e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 4px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+  .comparison-card {
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+  .comparison-card:nth-child(2) { animation-delay: 0.15s; }
+  .comparison-card:nth-child(3) { animation-delay: 0.3s; }
+  .comparison-card:nth-child(4) { animation-delay: 0.45s; }
+  .comparison-card:nth-child(5) { animation-delay: 0.6s; }
+  .comparison-card:nth-child(6) { animation-delay: 0.75s; }
+  .comparison-card:nth-child(7) { animation-delay: 0.9s; }
+  .comparison-card:nth-child(8) { animation-delay: 1.05s; }
+  @keyframes fadeInUp {
+    to { opacity:1; transform:translateY(0); }
+  }
+  .card-label {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .card-label .year {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e8d5a3;
+  }
+  .card-label .desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+  }
+  .comparison-wrapper {
+    position: relative;
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: ew-resize;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .comparison-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+  }
+  .img-after {
+    clip-path: inset(0 50% 0 0);
+  }
+  .img-before {
+    clip-path: inset(0 0 0 50%);
+  }
+  .slider-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background: #fff;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  }
+  .slider-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #e8d5a3;
+    pointer-events: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .slider-handle::before { content:"⇔"; font-size:18px; color:#2d1b4e; }
+  .labels-overlay {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: none;
+  }
+  .labels-overlay span {
+    background: rgba(0,0,0,0.65);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  .labels-overlay .label-before { color: rgba(255,255,255,0.7); }
+  .labels-overlay .label-after  { color: #e8d5a3; }
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: rgba(255,255,255,0.3);
+    font-size: 13px;
+  }
+  .footer a { color: #c9a96e; text-decoration: none; }
+  @media (max-width: 600px) {
+    .hero { padding: 40px 16px 24px; }
+    .slider-handle { width: 36px; height: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>AI魔法·南开百年</h1>
+  <p class="subtitle">历史照片修复前后对比 · 拖动滑块探索</p>
+</div>
+
+<div class="container">
+
+  <!-- ============================================ -->
+  <!-- 照片1：请替换 src 为你的实际图片路径 -->
+  <!-- 照片1：1919年 开学纪念合影 -->
+  <!-- ============================================ -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1919</span>
+      <span class="desc">南开大学开学纪念合影 · 周恩来总理在后排</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="1">
+      <img class="img-before" src="../老照片/1.png" alt="修复前">
+      <img class="img-after"  src="../老照片/1_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片2：1920s 思源堂 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1920s</span>
+      <span class="desc">思源堂 · 南开八里台校区最古老建筑</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="2">
+      <img class="img-before" src="../老照片/2.png" alt="修复前">
+      <img class="img-after"  src="../老照片/2_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片3 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1928</span>
+      <span class="desc">木斋图书馆 · 1937年毁于日军轰炸</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="3">
+      <img class="img-before" src="../老照片/3.png" alt="修复前">
+      <img class="img-after"  src="../老照片/3_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片4 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1937</span>
+      <span class="desc">被日军轰炸后的南开大学 · 全国首所罹难高校</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="4">
+      <img class="img-before" src="../老照片/4.png" alt="修复前">
+      <img class="img-after"  src="../老照片/4_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片5 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1946</span>
+      <span class="desc">南开返津复校 · 涅槃重生</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="5">
+      <img class="img-before" src="../老照片/5.png" alt="修复前">
+      <img class="img-after"  src="../老照片/5_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片6 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1950s</span>
+      <span class="desc">毛泽东主席视察南开大学</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="6">
+      <img class="img-before" src="../老照片/6.png" alt="修复前">
+      <img class="img-after"  src="../老照片/6_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片7 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1980s</span>
+      <span class="desc">南开师生校园生活 · 新开湖畔</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="7">
+      <img class="img-before" src="../老照片/7.png" alt="修复前">
+      <img class="img-after"  src="../老照片/7_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 照片8 -->
+  <div class="comparison-card">
+    <div class="card-label">
+      <span class="year">1990s</span>
+      <span class="desc">南开大学老校门 · 百年学府的守望</span>
+    </div>
+    <div class="comparison-wrapper" data-slider="8">
+      <img class="img-before" src="../老照片/8.png" alt="修复前">
+      <img class="img-after"  src="../老照片/8_修复.png" alt="修复后">
+      <div class="slider-line"></div>
+      <div class="slider-handle"></div>
+      <div class="labels-overlay">
+        <span class="label-before">修复前</span>
+        <span class="label-after">AI修复后</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>南开大学 AIGC 课程作品 · <a href="https://www.nankai.edu.cn" target="_blank">南开大学</a></p>
+</div>
+
+<script>
+(function(){
+  // 根据每张照片的实际比例自适应高度
+  document.querySelectorAll('.comparison-wrapper').forEach(function(wrapper){
+    var firstImg = wrapper.querySelector('img');
+    function resize(){
+      if(!firstImg.naturalWidth) return;
+      wrapper.style.aspectRatio = (firstImg.naturalWidth / firstImg.naturalHeight).toFixed(3);
+    }
+    if(firstImg.complete){ resize(); }
+    else { firstImg.onload = resize; }
+  });
+
+  // 拖拽滑块对比逻辑
+  document.querySelectorAll('.comparison-wrapper').forEach(function(wrapper){
+    var after  = wrapper.querySelector('.img-after');
+    var before = wrapper.querySelector('.img-before');
+    var line   = wrapper.querySelector('.slider-line');
+    var handle = wrapper.querySelector('.slider-handle');
+    var active = false;
+
+    function setPos(x){
+      var rect = wrapper.getBoundingClientRect();
+      var pct  = Math.max(0, Math.min(1, (x - rect.left) / rect.width));
+      var pctStr = (pct * 100) + '%';
+      after.style.clipPath  = 'inset(0 ' + (100-pct*100) + '% 0 0)';
+      before.style.clipPath = 'inset(0 0 0 ' + (pct*100) + '%)';
+      line.style.left   = pctStr;
+      handle.style.left = pctStr;
+    }
+
+    wrapper.addEventListener('mousedown', function(e){ active=true; setPos(e.clientX); e.preventDefault(); });
+    wrapper.addEventListener('touchstart', function(e){ active=true; setPos(e.touches[0].clientX); }, {passive:false});
+
+    window.addEventListener('mousemove', function(e){ if(active) setPos(e.clientX); });
+    window.addEventListener('touchmove', function(e){ if(active) setPos(e.touches[0].clientX); }, {passive:false});
+
+    window.addEventListener('mouseup', function(){ active=false; });
+    window.addEventListener('touchend', function(){ active=false; });
+
+    setPos(wrapper.getBoundingClientRect().left + wrapper.getBoundingClientRect().width * 0.5);
+  });
+})();
+</script>
+</body>
+</html>
